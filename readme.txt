@@ -34,10 +34,10 @@ Yes, the cross-sell products you select in the plugin settings will override any
 
 == Changelog ==
 
-= 0.1 =
+= 1.0 =
 * Initial release.
 
 == Upgrade Notice ==
 
-= 0.1 =
+= 1.0 =
 * Initial release of the plugin. Please test before using in a production environment.
