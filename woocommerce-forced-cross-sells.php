@@ -21,33 +21,59 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-// Define WCCS_PLUGIN_FILE.
+// Define WCFCS_PLUGIN_FILE.
 if ( ! defined( 'WCFCS_PLUGIN_FILE' ) ) {
 	define( 'WCFCS_PLUGIN_FILE', __FILE__ );
 }
 
-// Include the main classes responsible for core functionality.
-if ( ! class_exists( 'WCFCS_Cross_Sells' ) ) {
-	include_once dirname( __FILE__ ) . '/includes/class-wcfcs-cross-sells.php';
+class WCFCS_Plugin {
+
+	/**
+	 * Constructor method, used to initialize the plugin.
+	 */
+	public function __construct() {
+		// Include the main classes responsible for core functionality.
+		include_once dirname( __FILE__ ) . '/includes/class-wcfcs-cross-sells.php';
+		include_once dirname( __FILE__ ) . '/includes/class-wcfcs-admin-settings.php';
+
+		// Initialize plugin components.
+		$this->init_hooks();
+	}
+
+	/**
+	 * Initializes WordPress hooks.
+	 */
+	private function init_hooks() {
+		// Load plugin text domain.
+		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
+
+		// Initialize plugin parts.
+		$wccs_cross_sells    = new WCFCS_Cross_Sells();
+		$wccs_admin_settings = new WCFCS_Admin_Settings();
+
+		// Add the settings link to the plugin list table.
+		add_filter( 'plugin_action_links_' . plugin_basename( WCFCS_PLUGIN_FILE ), array( $this, 'add_action_links' ) );
+	}
+
+	/**
+	 * Load plugin text domain for translation.
+	 */
+	public function load_textdomain() {
+		load_plugin_textdomain( 'woocommerce-forced-cross-sells', false, basename( dirname( __FILE__ ) ) . '/languages' );
+	}
+
+	/**
+	 * Adds a 'Settings' link to the plugin action links.
+	 *
+	 * @param array $links An array of plugin action links.
+	 * @return array Updated array of plugin action links.
+	 */
+	public function add_action_links( $links ) {
+		$settings_link = '<a href="' . esc_url( get_admin_url( null, 'admin.php?page=wc-settings&tab=products&section=cross-sells' ) ) . '">' . esc_html__( 'Settings', 'woocommerce-forced-cross-sells' ) . '</a>';
+		array_unshift( $links, $settings_link ); 
+		return $links;
+	}
 }
 
-if ( ! class_exists( 'WCCS_Admin_Settings' ) ) {
-	include_once dirname( __FILE__ ) . '/includes/class-wcfcs-admin-settings.php';
-}
-
-// Initialize the plugin.
-add_action( 'plugins_loaded', 'woocommerce_forced_cross_sells_init' );
-
-/**
- * Initialize the WooCommerce Forced Cross-Sells plugin.
- *
- * Loads the plugin's text domain and initializes plugin components.
- */
-function woocommerce_forced_cross_sells_init() {
-	// Load plugin text domain.
-	load_plugin_textdomain( 'woocommerce-forced-cross-sells', false, basename( dirname( __FILE__ ) ) . '/languages' );
-
-	// Initialize plugin parts.
-	$wccs_cross_sells    = new WCFCS_Cross_Sells();
-	$wccs_admin_settings = new WCFCS_Admin_Settings();
-}
+// Instantiate the plugin class.
+new WCFCS_Plugin();
