@@ -161,24 +161,24 @@ add_filter( 'woocommerce_admin_field_wcfcs_product_selector', 'wcfcs_product_sel
  * Saves the settings for the Cross-sells section.
  */
 function wcfcs_save_settings() {
-    // Check if our nonce is set and verify it.
-    if ( ! isset( $_POST['_wpnonce'] ) ) {
-        wp_die( esc_html__( 'Action failed. Please refresh the page and retry.', 'woocommerce-forced-cross-sells' ) );
-    }
+	// Check if our nonce is set and verify it.
+	if ( ! isset( $_POST['_wpnonce'] ) ) {
+		wp_die( esc_html__( 'Action failed. Please refresh the page and retry.', 'woocommerce-forced-cross-sells' ) );
+	}
 
-    // Sanitize the nonce field.
-    $nonce = sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) );
-    if ( ! wp_verify_nonce( $nonce, 'woocommerce-settings' ) ) {
-        wp_die( esc_html__( 'Action failed. Please refresh the page and retry.', 'woocommerce-forced-cross-sells' ) );
-    }
+	// Sanitize the nonce field.
+	$nonce = sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) );
+	if ( ! wp_verify_nonce( $nonce, 'woocommerce-settings' ) ) {
+		wp_die( esc_html__( 'Action failed. Please refresh the page and retry.', 'woocommerce-forced-cross-sells' ) );
+	}
 
-    // Check if the cross-sell IDs are set. If not, save an empty array.
-    if ( isset( $_POST['wcfcs_forced_cross_sell_ids'] ) ) {
-        $forced_cross_sell_ids = array_map( 'intval', (array) wp_unslash( $_POST['wcfcs_forced_cross_sell_ids'] ) );
-    } else {
-        // No products have been selected, so we save an empty array.
-        $forced_cross_sell_ids = array();
-    }
-    update_option( 'wcfcs_forced_cross_sell_ids', $forced_cross_sell_ids );
+	// Check if the cross-sell IDs are set. If not, save an empty array.
+	if ( isset( $_POST['wcfcs_forced_cross_sell_ids'] ) ) {
+		$forced_cross_sell_ids = array_map( 'intval', (array) wp_unslash( $_POST['wcfcs_forced_cross_sell_ids'] ) );
+	} else {
+		// No products have been selected, so we save an empty array.
+		$forced_cross_sell_ids = array();
+	}
+	update_option( 'wcfcs_forced_cross_sell_ids', $forced_cross_sell_ids );
 }
 add_action( 'woocommerce_update_options_products_cross_sells', 'wcfcs_save_settings' );

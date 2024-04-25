@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Forced Cross-Sells
  * Plugin URI: https://woocommerce.com
  * Description: A plugin to ensure a specific list of products always show as cross-sells on the cart page, overriding any individual product cross-sell configurations.
- * Version: 0.1
+ * Version: 1.0
  * Author: Riaan Knoetze
  * Author URI: https://woocommerce.com
  * License: GPL-2.0+
@@ -26,6 +26,12 @@ if ( ! defined( 'WCFCS_PLUGIN_FILE' ) ) {
 	define( 'WCFCS_PLUGIN_FILE', __FILE__ );
 }
 
+/**
+ * Main plugin class for WooCommerce Forced Cross-Sells.
+ *
+ * This is the primary class responsible for initializing the plugin,
+ * setting up hooks, and handling core plugin functionality.
+ */
 class WCFCS_Plugin {
 
 	/**
@@ -53,6 +59,10 @@ class WCFCS_Plugin {
 
 		// Add the settings link to the plugin list table.
 		add_filter( 'plugin_action_links_' . plugin_basename( WCFCS_PLUGIN_FILE ), array( $this, 'add_action_links' ) );
+
+		// Declare WC Feature compatibility.
+		add_action( 'before_woocommerce_init', array( $this, 'declare_hpos_compatible' ) );
+		add_action( 'before_woocommerce_init', array( $this, 'declare_wc_block_compatibility' ) );
 	}
 
 	/**
@@ -70,8 +80,28 @@ class WCFCS_Plugin {
 	 */
 	public function add_action_links( $links ) {
 		$settings_link = '<a href="' . esc_url( get_admin_url( null, 'admin.php?page=wc-settings&tab=products&section=cross-sells' ) ) . '">' . esc_html__( 'Settings', 'woocommerce-forced-cross-sells' ) . '</a>';
-		array_unshift( $links, $settings_link ); 
+		array_unshift( $links, $settings_link );
 		return $links;
+	}
+
+	/**
+	 * Declare HPOS compatibility.
+	 */
+	public function declare_hpos_compatible() {
+		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+		}
+	}
+
+	/**
+	 * Declare Cart/Checkout Block compatibility.
+	 *
+	 * @since 2.3
+	 */
+	public function declare_wc_block_compatibility() {
+		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', __FILE__, true );
+		}
 	}
 }
 
