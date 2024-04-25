@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Forced Cross-Sells
  * Plugin URI: https://woocommerce.com
  * Description: A plugin to ensure a specific list of products always show as cross-sells on the cart page, overriding any individual product cross-sell configurations.
- * Version: 1.0.0
+ * Version: 0.1
  * Author: Riaan Knoetze
  * Author URI: https://woocommerce.com
  * License: GPL-2.0+
@@ -13,8 +13,8 @@
  *
  * WC requires at least: 7.4
  * WC tested up to: 8.7
- * 
- * * @package WooCommerce_Forced_Cross_Sells
+ *
+ * @package WooCommerce_Forced_Cross_Sells
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,17 +32,22 @@ if ( ! class_exists( 'WCFCS_Cross_Sells' ) ) {
 }
 
 if ( ! class_exists( 'WCCS_Admin_Settings' ) ) {
-	// include_once dirname( __FILE__ ) . '/includes/class-wcfcs-admin-settings.php';
+	include_once dirname( __FILE__ ) . '/includes/class-wcfcs-admin-settings.php';
 }
 
 // Initialize the plugin.
 add_action( 'plugins_loaded', 'woocommerce_forced_cross_sells_init' );
 
+/**
+ * Initialize the WooCommerce Forced Cross-Sells plugin.
+ *
+ * Loads the plugin's text domain and initializes plugin components.
+ */
 function woocommerce_forced_cross_sells_init() {
 	// Load plugin text domain.
 	load_plugin_textdomain( 'woocommerce-forced-cross-sells', false, basename( dirname( __FILE__ ) ) . '/languages' );
 
 	// Initialize plugin parts.
-	$wccs_cross_sells = new WCFCS_Cross_Sells();
-	// $wccs_admin_settings = new WCFCS_Admin_Settings();
+	$wccs_cross_sells    = new WCFCS_Cross_Sells();
+	$wccs_admin_settings = new WCFCS_Admin_Settings();
 }
